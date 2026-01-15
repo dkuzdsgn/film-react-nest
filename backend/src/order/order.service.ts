@@ -1,10 +1,11 @@
+import * as crypto from 'crypto';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/order.dto';
 import { FilmsMongoRepository } from '../repository/film.mongo.repository';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly filmsRepository: FilmsMongoRepository) {}
+  constructor(private readonly filmsRepository: FilmsMongoRepository) { }
 
   async createOrder(dto: CreateOrderDto) {
     const { tickets } = dto;
