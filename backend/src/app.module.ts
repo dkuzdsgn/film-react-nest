@@ -14,10 +14,6 @@ import { FilmsMongoRepository } from './repository/film.mongo.repository';
     ServeStaticModule.forRoot({
       rootPath: path.join(process.cwd(), 'public/content/afisha'),
       serveRoot: '/content/afisha',
-      serveStaticOptions: {
-        index: false,
-        fallthrough: false,
-      },
     }),
   ],
   controllers: [FilmsController, OrderController],
@@ -29,4 +25,4 @@ import { FilmsMongoRepository } from './repository/film.mongo.repository';
     OrderService,
   ],
 })
-export class AppModule {}
+export class AppModule { }

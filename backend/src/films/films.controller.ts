@@ -3,13 +3,14 @@ import { FilmsService } from './films.service';
 
 @Controller('films')
 export class FilmsController {
-  constructor(private readonly filmsService: FilmsService) {}
+  constructor(private readonly filmsService: FilmsService) { }
 
   @Get()
   async getFilms() {
     const films = await this.filmsService.getFilms();
 
     return {
+      total: films.length,
       items: films,
     };
   }
@@ -19,6 +20,7 @@ export class FilmsController {
     const schedule = await this.filmsService.getSchedule(id);
 
     return {
+      total: schedule.length,
       items: schedule,
     };
   }
