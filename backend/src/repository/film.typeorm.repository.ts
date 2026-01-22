@@ -12,7 +12,7 @@ export class FilmsTypeormRepository {
 
     @InjectRepository(Schedule)
     private readonly scheduleRepo: Repository<Schedule>,
-  ) {}
+  ) { }
 
   async findAll() {
     const films = await this.filmRepo.find();
@@ -70,3 +70,4 @@ export class FilmsTypeormRepository {
     await this.scheduleRepo.save(schedule);
   }
 }
+
