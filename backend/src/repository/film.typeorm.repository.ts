@@ -15,7 +15,12 @@ export class FilmsTypeormRepository {
   ) {}
 
   async findAll() {
-    return this.filmRepo.find();
+    const films = await this.filmRepo.find();
+
+    return films.map((film) => ({
+      ...film,
+      schedule: [],
+    }));
   }
 
   async findSchedulesByFilmId(id: string) {
