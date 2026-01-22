@@ -1,11 +1,10 @@
-import mongoose from 'mongoose';
-import { AppConfig } from './app.config.provider';
+import { FilmsMongoRepository } from './repository/film.mongo.repository';
+import { FilmsTypeormRepository } from './repository/film.typeorm.repository';
 
 export const databaseProvider = {
-  provide: 'DATABASE',
-  useFactory: async (config: AppConfig) => {
-    const connection = await mongoose.connect(config.database.url);
-    return connection;
-  },
-  inject: ['CONFIG'],
+  provide: 'FilmsRepository',
+  useClass:
+    process.env.DATABASE_DRIVER === 'postgres'
+      ? FilmsTypeormRepository
+      : FilmsMongoRepository,
 };
