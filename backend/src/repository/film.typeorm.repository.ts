@@ -24,34 +24,47 @@ export class FilmsTypeormRepository {
   }
 
   async findSchedulesByFilmId(id: string) {
-    const film = await this.filmRepo.findOne({
-      where: { id },
-      relations: ['schedule'],
+    const schedules = await this.scheduleRepo.find({
+      where: {
+        film: { id },
+      },
     });
 
-    return (film?.schedule ?? []).sort((a, b) =>
-      a.daytime.localeCompare(b.daytime),
-    );
+    return schedules;
   }
 
   async findScheduleById(filmId: string, scheduleId: string) {
-    return this.scheduleRepo.findOne({
+    const schedule = await this.scheduleRepo.findOne({
       where: {
         id: scheduleId,
         film: { id: filmId },
       },
-      relations: ['film'],
     });
+
+    if (!schedule) {
+      return null;
+    }
+
+    return {
+      ...schedule,
+      taken: schedule.taken ? JSON.parse(schedule.taken) : [],
+    };
   }
 
   async addTakenSeats(filmId: string, scheduleId: string, seats: string[]) {
     const schedule = await this.scheduleRepo.findOne({
-      where: { id: scheduleId },
+      where: {
+        id: scheduleId,
+        film: { id: filmId },
+      },
     });
 
-    if (!schedule) return;
+    if (!schedule) {
+      return;
+    }
 
-    const taken = JSON.parse(schedule.taken || '[]');
+    const taken: string[] = schedule.taken ? JSON.parse(schedule.taken) : [];
+
     schedule.taken = JSON.stringify([...taken, ...seats]);
 
     await this.scheduleRepo.save(schedule);
