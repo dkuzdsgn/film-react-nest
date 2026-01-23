@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Film } from '../films/film.entity';
 import { Schedule } from '../films/schedule.entity';
 
 @Injectable()
 export class FilmsTypeormRepository {
-  constructor(
-    @InjectRepository(Film)
-    private readonly filmRepo: Repository<Film>,
+  constructor(private readonly dataSource: DataSource) {}
 
-    @InjectRepository(Schedule)
-    private readonly scheduleRepo: Repository<Schedule>,
-  ) {}
+  private get filmRepo() {
+    return this.dataSource.getRepository(Film);
+  }
+
+  private get scheduleRepo() {
+    return this.dataSource.getRepository(Schedule);
+  }
 
   async findAll() {
     const films = await this.filmRepo.find();
@@ -21,15 +22,12 @@ export class FilmsTypeormRepository {
       id: film.id,
       rating: film.rating,
       director: film.director,
-      tags:
-        typeof film.tags === 'string'
-          ? film.tags.split(',').map((t) => t.trim())
-          : [],
+      tags: film.tags ? film.tags.split(',').map((t) => t.trim()) : [],
       image: film.image,
       cover: film.cover,
       title: film.title,
-      about: film.about,
-      description: film.description,
+      about: film.about ?? '',
+      description: film.description ?? '',
       schedule: [],
     }));
   }
@@ -53,10 +51,7 @@ export class FilmsTypeormRepository {
 
   async findScheduleById(filmId: string, scheduleId: string) {
     const schedule = await this.scheduleRepo.findOne({
-      where: {
-        id: scheduleId,
-        film: { id: filmId },
-      },
+      where: { id: scheduleId, film: { id: filmId } },
     });
 
     if (!schedule) return null;
@@ -74,10 +69,7 @@ export class FilmsTypeormRepository {
 
   async addTakenSeats(filmId: string, scheduleId: string, seats: string[]) {
     const schedule = await this.scheduleRepo.findOne({
-      where: {
-        id: scheduleId,
-        film: { id: filmId },
-      },
+      where: { id: scheduleId, film: { id: filmId } },
     });
 
     if (!schedule) return;
