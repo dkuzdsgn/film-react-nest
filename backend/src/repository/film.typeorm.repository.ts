@@ -25,12 +25,14 @@ export class FilmsTypeormRepository {
 
   async findSchedulesByFilmId(id: string) {
     const schedules = await this.scheduleRepo.find({
-      where: {
-        film: { id },
-      },
+      where: { film: { id } },
+      order: { daytime: 'ASC' },
     });
 
-    return schedules;
+    return schedules.map((s) => ({
+      ...s,
+      taken: s.taken ? s.taken.split(',').filter(Boolean) : [],
+    }));
   }
 
   async findScheduleById(filmId: string, scheduleId: string) {
@@ -41,13 +43,11 @@ export class FilmsTypeormRepository {
       },
     });
 
-    if (!schedule) {
-      return null;
-    }
+    if (!schedule) return null;
 
     return {
       ...schedule,
-      taken: schedule.taken ? JSON.parse(schedule.taken) : [],
+      taken: schedule.taken ? schedule.taken.split(',').filter(Boolean) : [],
     };
   }
 
@@ -59,15 +59,14 @@ export class FilmsTypeormRepository {
       },
     });
 
-    if (!schedule) {
-      return;
-    }
+    if (!schedule) return;
 
-    const taken: string[] = schedule.taken ? JSON.parse(schedule.taken) : [];
+    const current = schedule.taken
+      ? schedule.taken.split(',').filter(Boolean)
+      : [];
 
-    schedule.taken = JSON.stringify([...taken, ...seats]);
+    schedule.taken = [...current, ...seats].join(',');
 
     await this.scheduleRepo.save(schedule);
   }
 }
-
