@@ -13,10 +13,10 @@ import { Schedule } from './films/schedule.entity';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     TypeOrmModule.forFeature([Film, Schedule]),
   ],
   exports: [TypeOrmModule],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }
