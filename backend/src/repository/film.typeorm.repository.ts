@@ -18,7 +18,15 @@ export class FilmsTypeormRepository {
     const films = await this.filmRepo.find();
 
     return films.map((film) => ({
-      ...film,
+      id: film.id,
+      rating: film.rating,
+      director: film.director,
+      tags: film.tags ? film.tags.split(',').map((t) => t.trim()) : [],
+      image: film.image,
+      cover: film.cover,
+      title: film.title,
+      about: film.about,
+      description: film.description,
       schedule: [],
     }));
   }
@@ -30,7 +38,12 @@ export class FilmsTypeormRepository {
     });
 
     return schedules.map((s) => ({
-      ...s,
+      id: s.id,
+      daytime: s.daytime,
+      hall: s.hall,
+      rows: s.rows,
+      seats: s.seats,
+      price: s.price,
       taken: s.taken ? s.taken.split(',').filter(Boolean) : [],
     }));
   }
@@ -46,7 +59,12 @@ export class FilmsTypeormRepository {
     if (!schedule) return null;
 
     return {
-      ...schedule,
+      id: schedule.id,
+      daytime: schedule.daytime,
+      hall: schedule.hall,
+      rows: schedule.rows,
+      seats: schedule.seats,
+      price: schedule.price,
       taken: schedule.taken ? schedule.taken.split(',').filter(Boolean) : [],
     };
   }
