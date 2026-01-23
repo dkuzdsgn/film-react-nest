@@ -21,7 +21,10 @@ export class FilmsTypeormRepository {
       id: film.id,
       rating: film.rating,
       director: film.director,
-      tags: film.tags ? film.tags.split(',').map((t) => t.trim()) : [],
+      tags:
+        typeof film.tags === 'string'
+          ? film.tags.split(',').map((t) => t.trim())
+          : [],
       image: film.image,
       cover: film.cover,
       title: film.title,
