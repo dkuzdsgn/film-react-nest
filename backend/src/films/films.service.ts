@@ -1,9 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { FilmsMongoRepository } from '../repository/film.mongo.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { FilmsRepository } from '../repository/film.repository';
 
 @Injectable()
 export class FilmsService {
-  constructor(private readonly filmsRepository: FilmsMongoRepository) {}
+  constructor(
+    @Inject('FilmsRepository')
+    private readonly filmsRepository: FilmsRepository,
+  ) {}
 
   async getFilms() {
     return this.filmsRepository.findAll();

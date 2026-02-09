@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: film_postgres
+    environment:
+      POSTGRES_USER: prac
+      POSTGRES_PASSWORD: prac
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./test:/sql
+    command: >
+      bash -c "
+      docker-entrypoint.sh postgres &
+      sleep 5 &&
+      psql -U prac -d postgres -f /sql/prac.init.sql &&
+      psql -U prac -d prac -f /sql/prac.init.sql &&
+      psql -U prac -d prac -f /sql/prac.films.sql &&
+      psql -U prac -d prac -f /sql/prac.shedules.sql &&
+      wait
+      "

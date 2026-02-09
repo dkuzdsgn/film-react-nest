@@ -7,7 +7,7 @@ import { FilmsService } from './films/films.service';
 import { OrderService } from './order/order.service';
 import { configProvider } from './app.config.provider';
 import { databaseProvider } from './database.provider';
-import { FilmsMongoRepository } from './repository/film.mongo.repository';
+import { DatabaseModule } from './database.module';
 
 @Module({
   imports: [
@@ -15,14 +15,9 @@ import { FilmsMongoRepository } from './repository/film.mongo.repository';
       rootPath: path.join(process.cwd(), 'public/content/afisha'),
       serveRoot: '/content/afisha',
     }),
+    DatabaseModule,
   ],
   controllers: [FilmsController, OrderController],
-  providers: [
-    configProvider,
-    databaseProvider,
-    FilmsMongoRepository,
-    FilmsService,
-    OrderService,
-  ],
+  providers: [configProvider, databaseProvider, FilmsService, OrderService],
 })
-export class AppModule { }
+export class AppModule {}
