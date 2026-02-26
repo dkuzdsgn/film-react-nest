@@ -2,14 +2,33 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
 
+import { DevLogger } from './logger/dev.logger';
+import { JsonLogger } from './logger/json.logger';
+import { TskvLogger } from './logger/tskv.logger';
+
+function getLogger() {
+  switch (process.env.LOGGER_TYPE) {
+    case 'dev':
+      return new DevLogger();
+    case 'json':
+      return new JsonLogger();
+    case 'tskv':
+      return new TskvLogger();
+  }
+}
+
 async function bootstrap() {
-  console.log('Mongo URL:', process.env.DATABASE_URL);
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
   app.setGlobalPrefix('api/afisha');
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: true,
     credentials: true,
   });
-  await app.listen(3000);
+
+  app.useLogger(getLogger());
+
+  await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
